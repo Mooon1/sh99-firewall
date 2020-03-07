@@ -1,0 +1,10 @@
+name: "Firewall"
+version: "1.0.0"
+api-version: "1.13"
+description: "A firewall for bukkit servers."
+author: "Sh99"
+main: de.sh99.firewall.Firewall
+commands:
+  sh99:
+    usage: "/sh99"
+    description: "Use it with tabcomplete feature to access the whole sh99-library management."
