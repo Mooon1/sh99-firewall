@@ -4,6 +4,7 @@ api-version: "1.13"
 description: "A firewall for bukkit servers."
 author: "Sh99"
 main: de.sh99.firewall.Firewall
+load: STARTUP
 commands:
   sh99:
     usage: "/sh99"

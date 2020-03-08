@@ -39,7 +39,7 @@ public class FirewallUpdater
                 String hash = FirewallSerializer.key2Hash(loadedPlugin.getClass().toString());
 
                 if(!configEntries.containsKey(hash)){
-                    entriesCopy.add(new FirewallEntry(loadedPlugin, !plugin.getFirewallConfig().isForcemodeEnabled()));
+                    entriesCopy.add(new FirewallEntry(loadedPlugin, !plugin.getFirewallConfig().isForcemodeEnabled(), entries.size()));
                     continue;
                 }
 

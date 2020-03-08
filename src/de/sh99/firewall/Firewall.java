@@ -6,16 +6,13 @@ import de.sh99.firewall.entity.FirewallEntry;
 import de.sh99.firewall.storage.FirewallStorage;
 import de.sh99.firewall.storage.resource.FirewallStorageResource;
 import de.sh99.firewall.utils.FirewallUpdater;
-import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
 import sh99.persistence.PersistenceJavaPlugin;
 import sh99.persistence.PersistencePlugin;
 import sh99.persistence.VersionedPlugin;
-
-import java.io.File;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Firewall extends PersistenceJavaPlugin implements VersionedPlugin, PersistencePlugin
 {
@@ -37,7 +34,7 @@ public class Firewall extends PersistenceJavaPlugin implements VersionedPlugin, 
     }
 
     @Override
-    public Plugin definePlugin() {
+    public PersistenceJavaPlugin definePlugin() {
         return this;
     }
 
@@ -52,12 +49,6 @@ public class Firewall extends PersistenceJavaPlugin implements VersionedPlugin, 
         this.addSupportedVersion("1.9");
         this.addSupportedVersion("1.8");
         this.addSupportedVersion("1.7");
-        this.addSupportedVersion("1.6");
-        this.addSupportedVersion("1.5");
-        this.addSupportedVersion("1.4");
-        this.addSupportedVersion("1.3");
-        this.addSupportedVersion("1.2");
-        this.addSupportedVersion("1.1");
     }
 
     @Override
@@ -85,39 +76,31 @@ public class Firewall extends PersistenceJavaPlugin implements VersionedPlugin, 
         System.out.println("\033[0m#################################################################");
 
         System.out.println("\033[31mFIREWALL\033[0m\033[0m Disable all plugins.\033[0m");
+
+        Map<Class<?>, Plugin> instances = new HashMap<>();
+
         for (Plugin p:this.getServer().getPluginManager().getPlugins()){
             if(p instanceof Firewall){
                 continue;
             }
 
-            this.getServer().getPluginManager().disablePlugin(p);
+            instances.put(p.getClass(), p);
+            p.getServer().getPluginManager().disablePlugin(p);
             System.out.println("\033[31mFIREWALL\033[0m \033[31m" + p.getName() + "\033[0m got disabled.\033[0m");
         }
 
         for (FirewallEntry entry:entries){
+            if(!instances.containsKey(entry.getPlugin().getClass())){
+                continue;
+            }
+
             if(!entry.isEnabled()){
                 System.out.println("\033[33mFIREWALL\033[0m \033[33m" + entry.getName() + "\033[0m is disabled by configuration.\033[0m");
                 continue;
             }
 
-            this.getServer().getPluginManager().enablePlugin(entry.getPlugin());
-             System.out.println("\033[32mFIREWALL\033[0m \033[32m" + entry.getName() + "\033[0m has been loaded.\033[0m");
-
-//            try {
-//                Plugin plugin = this.getServer().getPluginManager().loadPlugin(new File(this.getDataFolder()+"/../"+entry.getName()+".jar"));
-//                if(null == plugin){
-//                    System.out.println("\033[31mFIREWALL\033[0m \033[31m" + entry.getName() + "\033[0m could not been found.\033[0m");
-//                    continue;
-//                }
-//
-//                this.getServer().getPluginManager().enablePlugin(plugin);
-//                System.out.println("\033[32mFIREWALL\033[0m \033[32m" + entry.getName() + "\033[0m has been loaded.\033[0m");
-//            } catch (InvalidPluginException | InvalidDescriptionException e) {
-//                if(isStacktrace()){
-//                    e.printStackTrace();
-//                }
-//                System.out.println("\033[31mFIREWALL\033[0m \033[31m" + entry.getName() + "\033[0m could not been loaded.\033[0m");
-//            }
+            instances.get(entry.getPlugin().getClass()).getServer().getPluginManager().enablePlugin(entry.getPlugin());
+            System.out.println("\033[32mFIREWALL\033[0m \033[32m" + entry.getName() + "\033[0m has been loaded.\033[0m");
         }
     }
 

@@ -22,6 +22,13 @@ public class FirewallEntry
         this.priority = 0;
     }
 
+    public FirewallEntry(Plugin plugin, boolean enabled, int priority)
+    {
+        this.plugin = plugin;
+        this.enabled = enabled;
+        this.priority = priority;
+    }
+
     public String getName() {
         return this.plugin.getName();
     }
